@@ -1,0 +1,37 @@
+# Anaconda environment for the adapted DKNN (main.py / run/train.py / run/predict.py)
+#
+#   conda env create -f environment_dknn.yml
+#   conda activate dknn
+#
+# NUMPY PIN (important):
+#   The conda-forge / pytorch builds of PyTorch 2.2.x are compiled against
+#   NumPy 1.x. Installing NumPy >= 2.0 breaks torch's NumPy bridge with:
+#       UserWarning: Failed to initialize NumPy: _ARRAY_API not found
+#       RuntimeError: Numpy is not available      (raised at torch.from_numpy)
+#   NumPy is therefore pinned to <2 here. If you bump to PyTorch >= 2.3, that
+#   build supports NumPy 2 and the pin can be relaxed -- but keep torch and
+#   numpy consistent with each other.
+#
+# Existing env? Don't recreate it, just fix the pin:
+#   conda activate dknn && conda install -c conda-forge "numpy=1.26.4"
+#
+# GPU note: the DKNN authors tested on RTX 4090 / 3060. The line below installs
+# the default build (CPU on macOS / Apple Silicon). For CUDA on Linux/Windows,
+# use the command from https://pytorch.org/get-started/locally/ instead, e.g.:
+#   conda install pytorch pytorch-cuda=12.1 -c pytorch -c nvidia
+#
+name: dknn
+channels:
+  - pytorch
+  - conda-forge
+dependencies:
+  - python=3.11
+  - numpy=1.26.4         # MUST be <2 for PyTorch 2.2.x -- see note above
+  - pytorch>=2.2,<2.3    # keep consistent with the numpy pin
+  - pandas
+  - scikit-learn
+  - matplotlib
+  - tensorboard
+  - tqdm
+  - pip
+# metrics_common.py is pure NumPy and needs nothing beyond the above.
